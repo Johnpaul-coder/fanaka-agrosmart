@@ -1,0 +1,47 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  /* Use HEX or HSL instead of raw RGB for easier manual editing */
+  --foreground-rgb: 0, 0, 0;
+  --background-start-rgb: 255, 255, 255; /* Changed to pure white for Ag-Tech clarity */
+  --background-end-rgb: 249, 250, 251;   /* Very light gray (gray-50) */
+}
+
+/* Optional: Dark Mode Support (Good for 2026 standards) */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --foreground-rgb: 255, 255, 255;
+    --background-start-rgb: 17, 24, 39; /* gray-900 */
+    --background-end-rgb: 0, 0, 0;
+  }
+}
+
+body {
+  color: rgb(var(--foreground-rgb));
+  background: linear-gradient(
+      to bottom,
+      transparent,
+      rgb(var(--background-end-rgb))
+    )
+    rgb(var(--background-start-rgb));
+  min-height: 100vh;
+  /* Smooth transitions */
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Custom utility for the Fanaka Gradient */
+/* Updated to use your Tailwind brand colors from the config */
+@layer components {
+  .fanaka-gradient {
+    @apply bg-gradient-to-br from-fanaka-green to-green-900 text-white;
+  }
+}
+
+/* Modern Performance Optimization */
+img {
+  /* content-visibility: auto is good, but adding aspect-ratio prevents layout shifts */
+  height: auto;
+  max-width: 100%;
+}
