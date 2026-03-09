@@ -1,4 +1,4 @@
-"use client"; // Required for interactivity
+/*"use client"; // Required for interactivity
 import { useState } from 'react';
 
 export default function ScannerPage() {
@@ -28,4 +28,4 @@ export default function ScannerPage() {
       </div>
     </div>
   );
-}
+}*/
