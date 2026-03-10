@@ -1,3 +1,4 @@
+import AIScanner from '@/components/AIScanner';
 'use client';
 
 import { useEffect } from 'react';

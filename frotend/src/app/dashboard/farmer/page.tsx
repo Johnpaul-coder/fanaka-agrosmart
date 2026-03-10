@@ -2,6 +2,8 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+// --- NEW IMPORT ADDED BELOW ---
+import AIScanner from '@/components/AIScanner'; 
 
 const API = process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:8000';
 
@@ -320,56 +322,10 @@ export default function FarmerDashboard() {
           </div>
         )}
 
-        {/* ══ AI SCANNER ══ */}
-        {tab==='scanner' && (
-          <div style={{maxWidth:860,margin:'0 auto'}}>
-            {/* Banner */}
-            <div style={{borderRadius:20,overflow:'hidden',marginBottom:28,position:'relative',height:160}}>
-              <img src="https://images.unsplash.com/photo-1530836369250-ef72a3f5cda8?w=1200&q=80" alt="" style={{width:'100%',height:'100%',objectFit:'cover',objectPosition:'center 30%'}}/>
-              <div style={{position:'absolute',inset:0,background:'rgba(26,58,42,.72)'}}/>
-              <div style={{position:'absolute',inset:0,display:'flex',flexDirection:'column',justifyContent:'center',padding:'0 36px'}}>
-                <h2 style={{fontFamily:"'Playfair Display',serif",color:'#fff',fontSize:'1.7rem',fontWeight:900,marginBottom:6}}>🔬 AI Crop Scanner</h2>
-                <p style={{fontFamily:"'DM Sans',sans-serif",color:'rgba(255,255,255,.65)',fontSize:'.88rem'}}>Describe your crop issue or paste an image URL — our AI will diagnose and recommend treatment.</p>
-              </div>
-            </div>
-
-            <div style={{background:'#fff',borderRadius:18,padding:32,border:'1.5px solid #f0ece4',marginBottom:28}}>
-              <label style={{fontFamily:"'DM Sans',sans-serif",fontWeight:600,color:'#1a3a2a',fontSize:'.85rem',display:'block',marginBottom:10}}>Describe the problem or paste image URL</label>
-              <textarea value={scanInput} onChange={e=>setScanInput(e.target.value)}
-                placeholder="e.g. 'Yellow spots on my tomato leaves spreading from the bottom up' or paste a photo URL..."
-                style={{width:'100%',height:110,padding:'12px 16px',border:'1.5px solid #e5e7eb',borderRadius:12,fontFamily:"'DM Sans',sans-serif",fontSize:'.88rem',resize:'vertical',outline:'none',color:'#1a3a2a',lineHeight:1.6,marginBottom:16}}/>
-              <button className="orange-btn" onClick={scanCrop} disabled={scanLoading}>
-                {scanLoading ? '🔄 Scanning...' : '🔍 Scan Now'}
-              </button>
-              {scanResult && (
-                <div style={{marginTop:20,padding:20,background:'#f0fdf4',borderRadius:12,borderLeft:'4px solid #4a8c5c'}}>
-                  <div style={{fontFamily:"'DM Sans',sans-serif",fontWeight:600,color:'#1a3a2a',marginBottom:6,fontSize:'.88rem'}}>📋 Diagnosis Result</div>
-                  <p style={{fontFamily:"'DM Sans',sans-serif",color:'#374151',fontSize:'.87rem',lineHeight:1.7}}>{scanResult}</p>
-                </div>
-              )}
-            </div>
-
-            {/* Recommendations */}
-            {recs.length>0 && (
-              <div>
-                <h3 style={{fontFamily:"'Playfair Display',serif",color:'#1a3a2a',fontSize:'1.2rem',marginBottom:18}}>💊 Recommended Inputs from Agrovets</h3>
-                <div style={{display:'grid',gridTemplateColumns:'repeat(3,1fr)',gap:16}}>
-                  {recs.map(r=>(
-                    <div key={r.id} className="rec-card" style={{background:'#fff',borderRadius:14,overflow:'hidden',border:'1.5px solid #f0ece4'}}>
-                      <div style={{height:110,overflow:'hidden'}}>
-                        <img src={CROP_IMAGES[r.category]||CROP_IMAGES.default} alt={r.name} style={{width:'100%',height:'100%',objectFit:'cover',transition:'transform .35s'}}/>
-                      </div>
-                      <div style={{padding:'14px 16px'}}>
-                        <div style={{fontFamily:"'DM Sans',sans-serif",color:'#e07b2a',fontSize:'.68rem',fontWeight:700,textTransform:'uppercase',letterSpacing:.5,marginBottom:4}}>{r.category||'Input'}</div>
-                        <div style={{fontFamily:"'Playfair Display',serif",fontWeight:700,color:'#1a3a2a',fontSize:'.95rem',marginBottom:3}}>{r.name}</div>
-                        <div style={{fontFamily:"'DM Sans',sans-serif",color:'#6b7280',fontSize:'.78rem',marginBottom:8}}>{r.quantity} · by {r.owner_name}</div>
-                        <div style={{fontFamily:"'DM Sans',sans-serif",fontWeight:800,color:'#1a3a2a',fontSize:'.95rem'}}>KES {r.price}</div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
+        {/* ══ AI SCANNER ══ (UPDATED SECTION) */}
+        {tab === 'scanner' && (
+          <div style={{ padding: '1.5rem', maxWidth: '900px', margin: '0 auto' }}>
+            <AIScanner farmerId={user?.id} />
           </div>
         )}
 

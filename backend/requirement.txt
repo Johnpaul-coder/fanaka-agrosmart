@@ -1,6 +1,9 @@
 fastapi
-uvicorn
+uvicorn[standard]
 sqlalchemy
-pydantic
+bcrypt==4.0.1
 python-dotenv
-passlib[bcrypt]
+httpx
+pydantic
+python-multipart
+Pillow

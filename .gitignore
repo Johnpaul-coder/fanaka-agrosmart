@@ -19,3 +19,4 @@ env/
 *.db
 *.sqlite3
 backend/node_modules/
+backend/.env
