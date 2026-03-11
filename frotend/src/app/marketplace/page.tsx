@@ -2,6 +2,8 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+// ADDED: Import your MpesaCheckout component
+import MpesaCheckout from '@/components/checkout/MpesaCheckout';
 
 const API = process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:8000';
 
@@ -56,6 +58,10 @@ export default function Marketplace() {
   const [loading, setLoading]     = useState(true);
   const [cartCount, setCartCount] = useState(0);
 
+  // ADDED: States to track actual cart items and control the checkout modal
+  const [cartItems, setCartItems] = useState<(Product & { qty: number })[]>([]);
+  const [showCheckout, setShowCheckout] = useState(false);
+
   useEffect(() => {
     const raw = localStorage.getItem('fanaka_user');
     if (!raw) { router.push('/'); return; }
@@ -82,6 +88,17 @@ export default function Marketplace() {
     if (res.ok) {
       setOrderMsg(prev => ({ ...prev, [productId]: '✅ Ordered!' }));
       setCartCount(c => c + 1);
+
+      // ADDED: Push the selected item into the cart state so we can calculate the total
+      const prod = products.find(p => p.id === productId);
+      if (prod) {
+        setCartItems(prev => {
+          const existing = prev.find(item => item.id === productId);
+          if (existing) return prev.map(item => item.id === productId ? { ...item, qty: item.qty + 1 } : item);
+          return [...prev, { ...prod, qty: 1 }];
+        });
+      }
+
       setTimeout(() => setOrderMsg(prev => ({ ...prev, [productId]: '' })), 3000);
     } else {
       setOrderMsg(prev => ({ ...prev, [productId]: '❌ Failed' }));
@@ -113,6 +130,9 @@ export default function Marketplace() {
     return PROD_IMG[p.category] || PROD_IMG[p.type] || PROD_IMG.crop;
   }
 
+  // ADDED: Calculate the accumulated total dynamically
+  const totalAmount = cartItems.reduce((sum, item) => sum + (item.price * item.qty), 0);
+
   return (
     <div style={{ minHeight:'100vh', background:'#fff', fontFamily:"'DM Sans',sans-serif" }}>
       <style>{`
@@ -142,7 +162,11 @@ export default function Marketplace() {
         <div style={{display:'flex',gap:16,alignItems:'center'}}>
           <span style={{color:'rgba(255,255,255,.5)',fontSize:'.74rem'}}>KES ▾</span>
           <span style={{color:'rgba(255,255,255,.5)',fontSize:'.74rem'}}>English ▾</span>
-          <div style={{background:'#e07b2a',borderRadius:999,padding:'3px 10px',display:'flex',alignItems:'center',gap:6}}>
+          {/* UPDATED: Added onClick to open the checkout modal when the cart is clicked */}
+          <div 
+            onClick={() => cartCount > 0 && setShowCheckout(true)}
+            style={{background:'#e07b2a',borderRadius:999,padding:'3px 10px',display:'flex',alignItems:'center',gap:6, cursor: cartCount > 0 ? 'pointer' : 'default'}}
+          >
             <span style={{fontSize:'.7rem'}}>🛒</span>
             <span style={{color:'#fff',fontWeight:700,fontSize:'.74rem'}}>{cartCount}</span>
           </div>
@@ -355,6 +379,31 @@ export default function Marketplace() {
           </div>
         </div>
       </footer>
+
+      {/* ADDED: The M-Pesa Checkout Modal Overlay */}
+      {showCheckout && (
+        <div style={{position:'fixed', inset:0, background:'rgba(0,0,0,0.5)', zIndex:999, display:'flex', justifyContent:'center', alignItems:'center'}}>
+          <div style={{background:'#fff', padding:24, borderRadius:12, width:'100%', maxWidth:500, maxHeight:'90vh', overflowY:'auto'}}>
+            <h2 style={{fontFamily:"'Playfair Display',serif", fontSize:'1.5rem', marginBottom:16, color: '#1a3a2a'}}>Your Cart Summary</h2>
+            
+            <div style={{marginBottom: 20}}>
+              {cartItems.map(item => (
+                <div key={item.id} style={{display:'flex', justifyContent:'space-between', marginBottom:8, fontSize: '0.9rem', color: '#374151'}}>
+                  <span>{item.qty}x {item.name}</span>
+                  <span style={{fontWeight: 600}}>KES {item.price * item.qty}</span>
+                </div>
+              ))}
+              <div style={{display:'flex', justifyContent:'space-between', fontWeight:'bold', marginTop:16, borderTop:'1px solid #e5e7eb', paddingTop:16, color: '#1a3a2a', fontSize: '1.1rem'}}>
+                <span>Total Amount:</span>
+                <span>KES {totalAmount}</span>
+              </div>
+            </div>
+
+            {/* Calling the component you created! */}
+            <MpesaCheckout totalAmount={totalAmount} onCancel={() => setShowCheckout(false)} />
+          </div>
+        </div>
+      )}
 
     </div>
   );

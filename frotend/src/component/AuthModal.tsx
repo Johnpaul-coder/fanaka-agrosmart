@@ -180,8 +180,8 @@ export default function AuthModal({ isOpen, onClose }: Props) {
             <h2>Welcome Back</h2>
             <p>Login with your name or phone number.</p>
             <div className="form-group">
-              <label>Name or Phone Number</label>
-              <input type="text" placeholder="e.g. John Kamau or 0712345678" value={loginId} onChange={e => setLoginId(e.target.value)} />
+              <label>Phone Number</label>
+              <input type="text" placeholder="e.g. 0712345678" value={loginId} onChange={e => setLoginId(e.target.value)} />
             </div>
             <div className="form-group">
               <label>Password</label>
